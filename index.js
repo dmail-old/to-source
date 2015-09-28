@@ -6,6 +6,33 @@ force override to get our behaviour
 
 */
 
+Number.prototype.toSource = function(){
+	return this.toString();
+};
+
+Boolean.prototype.toSource = function(){
+	return this.toString();
+};
+
+RegExp.prototype.toSource = function(){
+	return this.toString();
+};
+
+Date.prototype.toSource = function(){
+	return '(new Date(' + this.valueOf() + '))';
+};
+
+String.prototype.toSource = function(){
+	var source = this.replace(/"/g, '\\"');
+	source = source.replace(/\n/g, '\\n');
+	source = source.replace(/\r/g, '\\r');
+	return '"' + source + '"';
+};
+
+Function.prototype.toSource = function(){
+	return '(' + this.toString() + ')';
+};
+
 Object.toSource = function(object){
 	if( object === null ) return 'null';
 	if( object === undefined ) return 'undefined';
@@ -34,37 +61,6 @@ Object.sourceOf = function(value, seen, circular){
 	}
 
 	return source;
-};
-
-Number.prototype.toSource = function(){
-	return this.toString();
-};
-
-Boolean.prototype.toSource = function(){
-	return this.toString();
-};
-
-RegExp.prototype.toSource = function(){
-	return this.toString();
-};
-
-Date.prototype.toSource = function(){
-	return '(new Date(' + this.valueOf() + '))';
-};
-
-String.prototype.toSource = function(){
-	var source = this.replace(/"/g, '\\"');
-	source = source.replace(/\n/g, '\\n');
-	source = source.replace(/\r/g, '\\r');
-	return '"' + source + '"';
-};
-
-Function.prototype.toSource = function(){
-	return '(' + this.toString() + ')';
-};
-
-Error.prototype.toSource = function(){
-	return '(new ' + this.name + '('+ this.message.toSource() +'))';
 };
 
 Object.prototype.toSource = function(seen){
@@ -96,8 +92,12 @@ Array.prototype.toSource = function(seen){
 	return source;
 };
 
+Error.prototype.toSource = function(){
+	return '(new ' + this.name + '('+ this.message.toSource() +'))';
+};
+
 // use non ennumerable and writable property
-[Number, Boolean, RegExp, Date, String, Function, Error, Object, Array].forEach(function(constructor){
+[Number, Boolean, RegExp, Date, String, Function, Object, Array, Error].forEach(function(constructor){
 	Object.defineProperty(constructor.prototype, 'toSource', {
 		writable: true,
 		enumerable: false,
